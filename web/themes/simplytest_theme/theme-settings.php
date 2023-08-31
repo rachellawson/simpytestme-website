@@ -4,7 +4,10 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
 
-function simplytest_theme_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id = NULL) {
+/**
+ * @param array<string, mixed> $form
+ */
+function simplytest_theme_form_system_theme_settings_alter(array &$form, FormStateInterface $form_state, ?string $form_id = NULL): void {
   // Work-around for a core bug affecting admin themes. See issue #943212.
   if (isset($form_id)) {
     return;
@@ -33,8 +36,10 @@ function simplytest_theme_form_system_theme_settings_alter(&$form, FormStateInte
 
 /**
  * Check and save the uploaded header background image
+ *
+ * @param array<string, mixed> $element
  */
-function _simplytest_theme_header_bg_validate($element, FormStateInterface $form_state) {
+function _simplytest_theme_header_bg_validate(array $element, FormStateInterface $form_state): void {
   global $base_url;
 
   $validators = array('file_validate_extensions' => array('jpg jpeg svg webp'));
@@ -46,7 +51,7 @@ function _simplytest_theme_header_bg_validate($element, FormStateInterface $form
     $file = $files[0];
     $file->setPermanent();
     $file->save();
-    $file_url = file_create_url($file->getFileUri());
+    $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
     $file_url = str_ireplace($base_url, '', $file_url);
     $form_state->setValue('header_bg_file', $file_url);
   }

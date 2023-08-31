@@ -1,5 +1,8 @@
 <?php
 
-function simplytest_theme_preprocess_page(&$variables) {
+/**
+ * @param array<string, mixed> $variables
+ */
+function simplytest_theme_preprocess_page(array &$variables): void {
   $variables['header_bg_file'] = theme_get_setting('header_bg_file');
 }

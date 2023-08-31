@@ -1,0 +1,11 @@
+parameters:
+	level: 6
+	paths:
+		- web/modules/custom
+		- web/themes/simplytest_theme
+	excludePaths:
+		- web/themes/simplytest_theme/node_modules
+
+includes:
+	- phpstan-baseline.neon
+	- vendor/phpstan/phpstan/conf/bleedingEdge.neon
