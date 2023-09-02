@@ -10,6 +10,7 @@ services:
       - '@module_handler'
       - '@tugboat.client'
       - '@simplytest_tugboat.preview_config_generator'
+      - '@plugin.manager.oneclickdemo'
   simplytest_tugboat.preview_config_generator:
     class: Drupal\simplytest_tugboat\PreviewConfigGenerator
     arguments: ['@plugin.manager.oneclickdemo']

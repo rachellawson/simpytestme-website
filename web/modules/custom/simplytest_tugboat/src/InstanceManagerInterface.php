@@ -18,20 +18,20 @@ interface InstanceManagerInterface {
    * @return string
    *   The ID of the preview.
    */
-  public function loadPreviewId($context, $base = TRUE);
+  public function loadPreviewId(string $context, bool $base = TRUE): string;
 
   /**
    * Callback for the tugboat launch instance.
    *
-   * @param array $submission
+   * @param array{additionals: string[], bypass_install: bool, patches: string[], project: string, oneclickdemo: string, version: string} $submission
    *   An array describing a Drupal project. The  following keys are used:
    *   - additionals
    *   - bypass_install
    *   - patches
    *   - project: defaults to 'drupal'
-   *   - stm_one_click_demo
+   *   - oneclickdemo
    *   - version
    */
-  public function launchInstance($submission);
+  public function launchInstance(array $submission): array;
 
 }

@@ -18,8 +18,9 @@ use Drupal\simplytest_projects\ProjectVersionManager;
  */
 final class InstanceManagerTest extends KernelTestBase {
 
-//  protected $runTestInSeparateProcess = FALSE;
-
+  /**
+   * @var string[]
+   */
   protected static $modules = [
     'tugboat',
     'simplytest_projects',

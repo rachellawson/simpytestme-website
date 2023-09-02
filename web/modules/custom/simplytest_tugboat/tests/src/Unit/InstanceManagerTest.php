@@ -16,12 +16,14 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\tugboat\TugboatClient;
 use GuzzleHttp\HandlerStack;
 use Psr\Log\NullLogger;
+use Symfony\Component\DependencyInjection\Loader\Configurator\Traits\PropertyTrait;
 
 final class InstanceManagerTest extends UnitTestCase {
 
+  use PropertyTrait;
+
   private InstanceManager $instanceManager;
   private TugboatClient $tugboatClient;
-  private array $previewIds = [];
 
   protected function setUp(): void {
     if (empty(getenv('TUGBOAT_API_KEY')) || empty(getenv('TUGBOAT_REPOSITORY_ID'))) {

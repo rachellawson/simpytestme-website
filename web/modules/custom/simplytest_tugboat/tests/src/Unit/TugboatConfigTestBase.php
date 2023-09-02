@@ -5,11 +5,14 @@ namespace Drupal\Tests\simplytest_tugboat\Unit;
 use Drupal\simplytest_ocd\OneClickDemoPluginManager;
 use Drupal\simplytest_tugboat\PreviewConfigGenerator;
 use Drupal\Tests\UnitTestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Base test class for testing Tugboat configuration generation.
  */
 abstract class TugboatConfigTestBase extends UnitTestCase {
+
+  use ProphecyTrait;
 
   /**
    * The preview config generator.
@@ -18,14 +21,6 @@ abstract class TugboatConfigTestBase extends UnitTestCase {
    */
   protected $previewConfigGenerator;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'simplytest_projects',
-    'tugboat',
-    'simplytest_tugboat',
-  ];
 
   protected function setUp(): void {
     parent::setUp();
@@ -35,12 +30,12 @@ abstract class TugboatConfigTestBase extends UnitTestCase {
   }
 
   /**
-   * @param array $parameters
-   * @param array $expected_config
+   * @param array<string, string|string[]> $parameters
+   * @param array<string, string|string[]> $expected_config
    *
    * @dataProvider configData
    */
-  public function testConfigData(array $parameters, array $expected_config) {
+  public function testConfigData(array $parameters, array $expected_config): void {
     $generated_config = $this->previewConfigGenerator->generate($parameters);
     self::assertEquals([
       // Services is the root property, so we do not require test classes to

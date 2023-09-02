@@ -23,56 +23,32 @@ class InstanceManager implements InstanceManagerInterface {
   protected $tugboatSettings;
 
   /**
-   * The logger channel for this module.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface;
-   */
-  protected $logger;
-
-  /**
-   * The module handler service.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
-
-  /**
-   * The Tugboat client.
-   * @var \Drupal\tugboat\TugboatClient
-   */
-  protected $tugboatClient;
-
-  /**
-   * The preview config generator.
-   *
-   * @var \Drupal\simplytest_tugboat\PreviewConfigGenerator
-   */
-  protected $previewConfigGenerator;
-
-  /**
    * Constructs an InstanceManager object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\Logger\LoggerChannelInterface $logger
    *   The logger channel for this module.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler service.
-   * @param \Drupal\tugboat\TugboatClient $tugboat_client
+   * @param \Drupal\tugboat\TugboatClient $tugboatClient
    *   The Tugboat client.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, LoggerChannelInterface $logger, ModuleHandlerInterface $module_handler, TugboatClient $tugboat_client, PreviewConfigGenerator $preview_config_generator) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    private readonly LoggerChannelInterface $logger,
+    private readonly ModuleHandlerInterface $moduleHandler,
+    private readonly TugboatClient $tugboatClient,
+    private readonly PreviewConfigGenerator $previewConfigGenerator,
+    private readonly OneClickDemoPluginManager $oneClickDemoPluginManager
+    ) {
     $this->tugboatSettings = $config_factory->get('tugboat.settings');
-    $this->logger = $logger;
-    $this->moduleHandler = $module_handler;
-    $this->tugboatClient = $tugboat_client;
-    $this->previewConfigGenerator = $preview_config_generator;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function loadPreviewId($context, $base = TRUE) {
+  public function loadPreviewId(string $context, bool $base = TRUE): string {
     $branch_name = $base ? "base-$context" : $context;
     $repository_id = $this->tugboatSettings->get('repository_id');
     $response = $this->tugboatClient->requestWithApiKey('GET', "repos/{$repository_id}/previews");
@@ -104,13 +80,11 @@ class InstanceManager implements InstanceManagerInterface {
    * @todo accept \Drupal\simplytest_launch\Plugin\DataType\InstanceLaunch
    * @todo decide if data types should be refactored into here.
    */
-  public function launchInstance($submission) {
+  public function launchInstance(array $submission): array {
     // @todo move into its own method or OCD controller directly?
     // Check for one click demos.
     if (!empty($submission['oneclickdemo']) && $this->moduleHandler->moduleExists('simplytest_ocd')) {
-      $ocd_manager = \Drupal::service('plugin.manager.oneclickdemo');
-      assert($ocd_manager instanceof OneClickDemoPluginManager);
-      $ocd = $ocd_manager->getDefinition($submission['oneclickdemo']);
+      $ocd = $this->oneClickDemoPluginManager->getDefinition($submission['oneclickdemo']);
 
       $context = $ocd['base_preview_name'];
       // @todo Should one-click-demos _really_ have parameters? they're one click.
